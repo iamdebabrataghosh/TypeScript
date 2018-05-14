@@ -23,7 +23,7 @@
 namespace FourSlash {
     ts.disableIncrementalParsing = false;
 
-    import ArrayOrSingle = FourSlashInterface.Many;
+    import ArrayOrSingle = FourSlashInterface.ArrayOrSingle;
 
     // Represents a parsed source file with metadata
     interface FourSlashFile {
@@ -1490,7 +1490,7 @@ Actual: ${stringify(fullActual)}`);
             assert.equal(ts.displayPartsToString(actualDocComment), docComment, this.assertionMessageAtLastKnownMarker("current signature help doc comment"));
         }
 
-        public verifyCurrentSignatureHelpTags(tags: ts.JSDocTagInfo[]) {
+        public verifyCurrentSignatureHelpTags(tags: ReadonlyArray<ts.JSDocTagInfo>) {
             const actualTags = this.getActiveSignatureHelpItem().tags;
 
             assert.equal(actualTags.length, tags.length, this.assertionMessageAtLastKnownMarker("signature help tags"));
@@ -1512,18 +1512,67 @@ Actual: ${stringify(fullActual)}`);
             assert.equal(actual, expected);
         }
 
-        public verifySignatureHelpPresent(shouldBePresent = true) {
+        public verifyNoSignatureHelp(markers: ReadonlyArray<string>) {
+            if (markers.length) {
+                for (const marker of markers) {
+                    this.goToMarker(marker);
+                    this.verifyNoSignatureHelp(ts.emptyArray);
+                }
+                return;
+            }
+
             const actual = this.languageService.getSignatureHelpItems(this.activeFile.fileName, this.currentCaretPosition);
-            if (shouldBePresent) {
-                if (!actual) {
-                    this.raiseError("Expected signature help to be present, but it wasn't");
+            if (actual) {
+                this.raiseError(`Expected no signature help, but got "${stringify(actual)}"`);
+            }
+        }
+
+        public verifySignatureHelp(optionses: ReadonlyArray<FourSlashInterface.VerifySignatureHelpOptions>) {
+            for (const options of optionses) {
+                if (options.marker === undefined) {
+                    this.verifySignatureHelpWorker(options);
+                }
+                else {
+                    for (const marker of toArray(options.marker)) {
+                        this.goToMarker(marker);
+                        this.verifySignatureHelpWorker(options);
+                    }
                 }
             }
-            else {
-                if (actual) {
-                    this.raiseError(`Expected no signature help, but got "${stringify(actual)}"`);
-                }
+        }
+
+        private verifySignatureHelpWorker(options: FourSlashInterface.VerifySignatureHelpOptions) {
+            this.verifySignatureHelpCount(options.overloadsCount || 1);
+
+            if (options.docComment !== undefined) this.verifyCurrentSignatureHelpDocComment(options.docComment);
+            if (options.text !== undefined) this.verifyCurrentSignatureHelpIs(options.text);
+            if (options.currentParameterIsVariable !== undefined) this.verifyCurrentParameterIsVariable(options.currentParameterIsVariable);
+            if (options.parameterName !== undefined) this.verifyCurrentParameterHelpName(options.parameterName);
+            if (options.parameterSpan !== undefined) this.verifyCurrentParameterSpanIs(options.parameterSpan);
+            if (options.parameterDocComment) this.verifyCurrentParameterHelpDocComment(options.parameterDocComment);
+            if (options.parameterCount !== undefined) this.verifyCurrentSignatureHelpParameterCount(options.parameterCount);
+            if (options.isVariadic !== undefined) this.verifyCurrentSignatureHelpIsVariadic(options.isVariadic);
+            if (options.tags !== undefined) this.verifyCurrentSignatureHelpTags(options.tags);
+            if (options.argumentCount !== undefined) this.verifySignatureHelpArgumentCount(options.argumentCount);
+
+            const allKeys: ReadonlyArray<keyof FourSlashInterface.VerifySignatureHelpOptions> = [
+                "marker",
+                "overloadsCount",
+                "docComment",
+                "text",
+                "currentParameterIsVariable",
+                "parameterName",
+                "parameterSpan",
+                "parameterDocComment",
+                "parameterCount",
+                "isVariadic",
+                "tags",
+                "argumentCount",
+            ];
+            for (const key in options) {
+                ts.Debug.assert(ts.contains(allKeys, key));
             }
+
         }
 
         private validate(name: string, expected: string, actual: string) {
@@ -4042,8 +4091,12 @@ namespace FourSlashInterface {
             this.state.verifyCompletionListAllowsNewIdentifier(this.negative);
         }
 
-        public signatureHelpPresent() {
-            this.state.verifySignatureHelpPresent(!this.negative);
+        public noSignatureHelp(...markers: string[]): void {
+            this.state.verifyNoSignatureHelp(markers);
+        }
+
+        public signatureHelp(...options: VerifySignatureHelpOptions[]): void {
+            this.state.verifySignatureHelp(options);
         }
 
         public errorExistsBetweenMarkers(startMarker: string, endMarker: string) {
@@ -4108,7 +4161,7 @@ namespace FourSlashInterface {
             super(state);
         }
 
-        public completionsAt(markerName: Many<string>, completions: ReadonlyArray<ExpectedCompletionEntry>, options?: CompletionsAtOptions) {
+        public completionsAt(markerName: ArrayOrSingle<string>, completions: ReadonlyArray<ExpectedCompletionEntry>, options?: CompletionsAtOptions) {
             this.state.verifyCompletionsAt(markerName, completions, options);
         }
 
@@ -4163,19 +4216,19 @@ namespace FourSlashInterface {
             this.state.verifyCurrentFileContent(text);
         }
 
-        public goToDefinitionIs(endMarkers: Many<string>) {
+        public goToDefinitionIs(endMarkers: ArrayOrSingle<string>) {
             this.state.verifyGoToDefinitionIs(endMarkers);
         }
 
-        public goToDefinition(startMarkerName: Many<string>, endMarkerName: Many<string>, range?: FourSlash.Range): void;
-        public goToDefinition(startsAndEnds: [Many<string>, Many<string>][] | { [startMarkerName: string]: Many<string> }): void;
-        public goToDefinition(arg0: any, endMarkerName?: Many<string>) {
+        public goToDefinition(startMarkerName: ArrayOrSingle<string>, endMarkerName: ArrayOrSingle<string>, range?: FourSlash.Range): void;
+        public goToDefinition(startsAndEnds: [ArrayOrSingle<string>, ArrayOrSingle<string>][] | { [startMarkerName: string]: ArrayOrSingle<string> }): void;
+        public goToDefinition(arg0: any, endMarkerName?: ArrayOrSingle<string>) {
             this.state.verifyGoToDefinition(arg0, endMarkerName);
         }
 
-        public goToType(startMarkerName: Many<string>, endMarkerName: Many<string>): void;
-        public goToType(startsAndEnds: [Many<string>, Many<string>][] | { [startMarkerName: string]: Many<string> }): void;
-        public goToType(arg0: any, endMarkerName?: Many<string>) {
+        public goToType(startMarkerName: ArrayOrSingle<string>, endMarkerName: ArrayOrSingle<string>): void;
+        public goToType(startsAndEnds: [ArrayOrSingle<string>, ArrayOrSingle<string>][] | { [startMarkerName: string]: ArrayOrSingle<string> }): void;
+        public goToType(arg0: any, endMarkerName?: ArrayOrSingle<string>) {
             this.state.verifyGoToType(arg0, endMarkerName);
         }
 
@@ -4203,7 +4256,7 @@ namespace FourSlashInterface {
             this.state.verifyTypeOfSymbolAtLocation(range, symbol, expected);
         }
 
-        public referenceGroups(starts: Many<string> | Many<FourSlash.Range>, parts: ReferenceGroup[]) {
+        public referenceGroups(starts: ArrayOrSingle<string> | ArrayOrSingle<FourSlash.Range>, parts: ReferenceGroup[]) {
             this.state.verifyReferenceGroups(starts, parts);
         }
 
@@ -4435,7 +4488,7 @@ namespace FourSlashInterface {
             this.state.verifyRenameInfoFailed(message);
         }
 
-        public renameLocations(startRanges: Many<FourSlash.Range>, options: FourSlash.Range[] | { findInStrings?: boolean, findInComments?: boolean, ranges: FourSlash.Range[] }) {
+        public renameLocations(startRanges: ArrayOrSingle<FourSlash.Range>, options: FourSlash.Range[] | { findInStrings?: boolean, findInComments?: boolean, ranges: FourSlash.Range[] }) {
             this.state.verifyRenameLocations(startRanges, options);
         }
 
@@ -4775,16 +4828,31 @@ namespace FourSlashInterface {
     }
 
     export interface VerifyCompletionsOptions {
-        readonly marker?: Many<string>;
+        readonly marker?: ArrayOrSingle<string>;
         readonly isNewIdentifierLocation?: boolean;
-        readonly exact?: Many<ExpectedCompletionEntry>;
-        readonly includes?: Many<ExpectedCompletionEntry>;
-        readonly excludes?: Many<string | { readonly name: string, readonly source: string }>;
+        readonly exact?: ArrayOrSingle<ExpectedCompletionEntry>;
+        readonly includes?: ArrayOrSingle<ExpectedCompletionEntry>;
+        readonly excludes?: ArrayOrSingle<string | { readonly name: string, readonly source: string }>;
         readonly preferences: ts.UserPreferences;
         readonly triggerCharacter?: ts.CompletionsTriggerCharacter;
     }
 
-    export type Many<T> = T | ReadonlyArray<T>;
+    export interface VerifySignatureHelpOptions {
+        readonly marker?: ArrayOrSingle<string>; //goto here
+        readonly overloadsCount?: number; // defaults to 1. //verify.signatureHelpCount
+        readonly docComment?: string; //verify.currentSignatureHelpDocComment
+        readonly text?: string; //verify.currentSignatureHelpIs
+        readonly currentParameterIsVariable?: boolean; //verify.currentParameterIsVariable
+        readonly parameterName?: string; //verify.currentParameterHelpArgumentNameIs
+        readonly parameterSpan?: string; //verify.currentParameterSpanIs
+        readonly parameterDocComment?: string; //verify.currentParameterHelpDocComment
+        readonly parameterCount?: number; //verify.currentSignatureHelpParameterCount
+        readonly isVariadic?: boolean; //verify.currentSignatureHelpIsVariadic
+        readonly tags?: ReadonlyArray<ts.JSDocTagInfo>; //verify.currentSignatureHelpTags
+        readonly argumentCount?: number;
+    }
+
+    export type ArrayOrSingle<T> = T | ReadonlyArray<T>;
 
     export interface VerifyCompletionListContainsOptions extends ts.UserPreferences {
         triggerCharacter?: ts.CompletionsTriggerCharacter;

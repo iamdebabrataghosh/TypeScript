@@ -169,7 +169,6 @@ declare namespace FourSlashInterface {
         completionListContainsClassElementKeywords(): void;
         completionListContainsConstructorParameterKeywords(): void;
         completionListAllowsNewIdentifier(): void;
-        signatureHelpPresent(): void;
         errorExistsBetweenMarkers(startMarker: string, endMarker: string): void;
         errorExistsAfterMarker(markerName?: string): void;
         errorExistsBeforeMarker(markerName?: string): void;
@@ -263,17 +262,19 @@ declare namespace FourSlashInterface {
         rangesWithSameTextAreRenameLocations(): void;
         rangesAreRenameLocations(options?: Range[] | { findInStrings?: boolean, findInComments?: boolean, ranges?: Range[] });
         findReferencesDefinitionDisplayPartsAtCaretAre(expected: ts.SymbolDisplayPart[]): void;
-        currentParameterHelpArgumentNameIs(name: string): void;
-        currentParameterSpanIs(parameter: string): void;
-        currentParameterHelpArgumentDocCommentIs(docComment: string): void;
-        currentSignatureHelpDocCommentIs(docComment: string): void;
-        currentSignatureHelpTagsAre(tags: ts.JSDocTagInfo[]): void;
-        signatureHelpCountIs(expected: number): void;
-        signatureHelpArgumentCountIs(expected: number): void;
-        signatureHelpCurrentArgumentListIsVariadic(expected: boolean);
-        currentSignatureParameterCountIs(expected: number): void;
-        currentSignatureTypeParameterCountIs(expected: number): void;
-        currentSignatureHelpIs(expected: string): void;
+        /** @deprecated */ currentParameterHelpArgumentNameIs(name: string): void;
+        /** @deprecated */ currentParameterSpanIs(parameter: string): void;
+        /** @deprecated */ currentParameterHelpArgumentDocCommentIs(docComment: string): void;
+        /** @deprecated */ currentSignatureHelpDocCommentIs(docComment: string): void;
+        /** @deprecated */ currentSignatureHelpTagsAre(tags: ts.JSDocTagInfo[]): void;
+        /** @deprecated */ signatureHelpCountIs(expected: number): void;
+        /** @deprecated */ signatureHelpArgumentCountIs(expected: number): void;
+        /** @deprecated */ signatureHelpCurrentArgumentListIsVariadic(expected: boolean);
+        /** @deprecated */ currentSignatureParameterCountIs(expected: number): void;
+        /** @deprecated */ currentSignatureTypeParameterCountIs(expected: number): void;
+        /** @deprecated */ currentSignatureHelpIs(expected: string): void;
+        noSignatureHelp(...markers: string[]): void;
+        signatureHelp(...options: VerifySignatureHelpOptions[]): void;
         // Checks that there are no compile errors.
         noErrors(): void;
         numberOfErrorsInCurrentFile(expected: number): void;
@@ -554,6 +555,22 @@ declare namespace FourSlashInterface {
         readonly documentation?: string,
         readonly sourceDisplay?: string,
     };
+
+    interface VerifySignatureHelpOptions {
+        marker?: ArrayOrSingle<string>;
+        overloadsCount?: number; //Defaults to 1. //verify.signatureHelpCount
+        docComment?: string; //verify.currentSignatureHelpDocComment
+        text?: string; //verify.currentSignatureHelpIs
+        currentParameterIsVariable?: boolean; //verify.currentParameterIsVariable
+        name?: string; //verify.currentParameterHelpName
+        parameterName?: string; //verify.currentParameterHelpArgumentNameIs
+        parameterSpan?: string; //verify.currentParameterSpanIs
+        parameterDocComment?: string; //verify.currentParameterHelpDocComment
+        parameterCount?: number; //verify.currentSignatureHelpParameterCount
+        isVariadic?: boolean; //verify.currentSignatureHelpIsVariadic
+        tags?: ReadonlyArray<ts.JSDocTagInfo>; //verify.currentSignatureHelpTags
+        argumentCount?: number;
+    }
 
     type ArrayOrSingle<T> = T | ReadonlyArray<T>;
 }
