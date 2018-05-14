@@ -47,13 +47,10 @@ goTo.marker('4');
 verify.completionListContains('lambdaFoo', 'var lambdaFoo: (a: number, b: number) => number', 'lamdaFoo var comment\nthis is lambda comment');
 verify.completionListContains('lambddaNoVarComment', 'var lambddaNoVarComment: (a: number, b: number) => number', 'this is lambda multiplication');
 
-goTo.marker('5');
-verify.currentParameterHelpArgumentDocCommentIs("param a");
-
-goTo.marker('6');
-verify.currentParameterHelpArgumentDocCommentIs("param b");
-
-
+verify.signatureHelp(
+    { marker: "5", parameterDocComment: "param a" },
+    { marker: "6", parameterDocComment: "param b" },
+);
 
 
 // no documentation from nested lambda

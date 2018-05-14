@@ -11,20 +11,21 @@
 ////}
 ////
 ////fo/*1*/
-goTo.marker('1');
-verify.noSignatureHelp();
+
+verify.noSignatureHelp("1");
 edit.insert("o");
 verify.noSignatureHelp();
 edit.insert("(");
-verify.currentParameterHelpArgumentDocCommentIs("The zero-based index integer indicating the beginning of the substring.");
+verify.signatureHelp({ parameterDocComment: "The zero-based index integer indicating the beginning of the substring." });
 edit.insert("10,");
-verify.currentParameterHelpArgumentDocCommentIs("Zero-based index integer indicating the end of the substring. The substring includes the characters up to, but not including, the character indicated by end.\nIf end is omitted, the characters from start through the end of the original string are returned.");
+const parameterDocComment = "Zero-based index integer indicating the end of the substring. The substring includes the characters up to, but not including, the character indicated by end.\nIf end is omitted, the characters from start through the end of the original string are returned.";
+verify.signatureHelp({ parameterDocComment });
 edit.insert("  ");
-verify.currentParameterHelpArgumentDocCommentIs("Zero-based index integer indicating the end of the substring. The substring includes the characters up to, but not including, the character indicated by end.\nIf end is omitted, the characters from start through the end of the original string are returned.");
+verify.signatureHelp({ parameterDocComment });
 edit.insert(",  ");
 edit.backspace(3);
-verify.currentParameterHelpArgumentDocCommentIs("Zero-based index integer indicating the end of the substring. The substring includes the characters up to, but not including, the character indicated by end.\nIf end is omitted, the characters from start through the end of the original string are returned.");
+verify.signatureHelp({ parameterDocComment });
 edit.insert("12");
-verify.currentParameterHelpArgumentDocCommentIs("Zero-based index integer indicating the end of the substring. The substring includes the characters up to, but not including, the character indicated by end.\nIf end is omitted, the characters from start through the end of the original string are returned.");
+verify.signatureHelp({ parameterDocComment });
 edit.insert(")");
 verify.noSignatureHelp();

@@ -401,8 +401,11 @@ verify.quickInfoAt("45q", "function jsDocCommentAlignmentTest1(): void", "This i
 verify.signatureHelp({ marker: "46", docComment: "This is function comment\n    And aligned with 4 space char margin" });
 verify.quickInfoAt("46q", "function jsDocCommentAlignmentTest2(): void", "This is function comment\n    And aligned with 4 space char margin");
 
-verify.signatureHelp({ marker: "47", docComment: "This is function comment\n    And aligned with 4 space char margin" });
-verify.currentParameterHelpArgumentDocCommentIs("this is info about a\nspanning on two lines and aligned perfectly");
+verify.signatureHelp({
+    marker: "47",
+    docComment: "This is function comment\n    And aligned with 4 space char margin",
+    parameterDocComment: "this is info about a\nspanning on two lines and aligned perfectly",
+});
 verify.quickInfos({
     "47q": [
         "function jsDocCommentAlignmentTest3(a: string, b: any, c: any): void",
