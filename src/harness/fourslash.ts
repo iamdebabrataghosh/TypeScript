@@ -1454,19 +1454,13 @@ Actual: ${stringify(fullActual)}`);
                 ts.displayPartsToString(help.suffixDisplayParts), expected);
         }
 
-        public verifyCurrentParameterIsVariable(isVariable: boolean) {
-            const signature = this.getActiveSignatureHelpItem();
-            assert.isOk(signature);
-            assert.equal(isVariable, signature.isVariadic);
-        }
-
-        public verifyCurrentParameterHelpName(name: string) {
+        private verifyCurrentParameterHelpName(name: string) {//!
             const activeParameter = this.getActiveParameter();
             const activeParameterName = activeParameter.name;
             assert.equal(activeParameterName, name);
         }
 
-        public verifyCurrentParameterSpanIs(parameter: string) {
+        private verifyCurrentParameterSpanIs(parameter: string) {//!
             const activeParameter = this.getActiveParameter();
             assert.equal(ts.displayPartsToString(activeParameter.displayParts), parameter);
         }
@@ -1477,11 +1471,11 @@ Actual: ${stringify(fullActual)}`);
             assert.equal(ts.displayPartsToString(activeParameterDocComment), docComment, this.assertionMessageAtLastKnownMarker("current parameter Help DocComment"));
         }
 
-        public verifyCurrentSignatureHelpParameterCount(expectedCount: number) {
+        private verifyCurrentSignatureHelpParameterCount(expectedCount: number) {//!
             assert.equal(this.getActiveSignatureHelpItem().parameters.length, expectedCount);
         }
 
-        public verifyCurrentSignatureHelpIsVariadic(expected: boolean) {
+        private verifyCurrentSignatureHelpIsVariadic(expected: boolean) {//!
             assert.equal(this.getActiveSignatureHelpItem().isVariadic, expected);
         }
 
@@ -1490,7 +1484,7 @@ Actual: ${stringify(fullActual)}`);
             assert.equal(ts.displayPartsToString(actualDocComment), docComment, this.assertionMessageAtLastKnownMarker("current signature help doc comment"));
         }
 
-        public verifyCurrentSignatureHelpTags(tags: ReadonlyArray<ts.JSDocTagInfo>) {
+        private verifyCurrentSignatureHelpTags(tags: ReadonlyArray<ts.JSDocTagInfo>) {//!
             const actualTags = this.getActiveSignatureHelpItem().tags;
 
             assert.equal(actualTags.length, tags.length, this.assertionMessageAtLastKnownMarker("signature help tags"));
@@ -1500,13 +1494,13 @@ Actual: ${stringify(fullActual)}`);
             });
         }
 
-        public verifySignatureHelpCount(expected: number) {
+        private verifySignatureHelpCount(expected: number) {//!
             const help = this.languageService.getSignatureHelpItems(this.activeFile.fileName, this.currentCaretPosition);
             const actual = help && help.items ? help.items.length : 0;
             assert.equal(actual, expected);
         }
 
-        public verifySignatureHelpArgumentCount(expected: number) {
+        private verifySignatureHelpArgumentCount(expected: number) {//!
             const signatureHelpItems = this.languageService.getSignatureHelpItems(this.activeFile.fileName, this.currentCaretPosition);
             const actual = signatureHelpItems.argumentCount;
             assert.equal(actual, expected);
@@ -1546,7 +1540,6 @@ Actual: ${stringify(fullActual)}`);
 
             if (options.docComment !== undefined) this.verifyCurrentSignatureHelpDocComment(options.docComment);
             if (options.text !== undefined) this.verifyCurrentSignatureHelpIs(options.text);
-            if (options.currentParameterIsVariable !== undefined) this.verifyCurrentParameterIsVariable(options.currentParameterIsVariable);
             if (options.parameterName !== undefined) this.verifyCurrentParameterHelpName(options.parameterName);
             if (options.parameterSpan !== undefined) this.verifyCurrentParameterSpanIs(options.parameterSpan);
             if (options.parameterDocComment) this.verifyCurrentParameterHelpDocComment(options.parameterDocComment);
@@ -1560,7 +1553,6 @@ Actual: ${stringify(fullActual)}`);
                 "overloadsCount",
                 "docComment",
                 "text",
-                "currentParameterIsVariable",
                 "parameterName",
                 "parameterSpan",
                 "parameterDocComment",
@@ -4276,40 +4268,12 @@ namespace FourSlashInterface {
             this.state.verifyDisplayPartsOfReferencedSymbol(expected);
         }
 
-        public currentParameterHelpArgumentNameIs(name: string) {
-            this.state.verifyCurrentParameterHelpName(name);
-        }
-
-        public currentParameterSpanIs(parameter: string) {
-            this.state.verifyCurrentParameterSpanIs(parameter);
-        }
-
         public currentParameterHelpArgumentDocCommentIs(docComment: string) {
             this.state.verifyCurrentParameterHelpDocComment(docComment);
         }
 
         public currentSignatureHelpDocCommentIs(docComment: string) {
             this.state.verifyCurrentSignatureHelpDocComment(docComment);
-        }
-
-        public currentSignatureHelpTagsAre(tags: ts.JSDocTagInfo[]) {
-            this.state.verifyCurrentSignatureHelpTags(tags);
-        }
-
-        public signatureHelpCountIs(expected: number) {
-            this.state.verifySignatureHelpCount(expected);
-        }
-
-        public signatureHelpCurrentArgumentListIsVariadic(expected: boolean) {
-            this.state.verifyCurrentSignatureHelpIsVariadic(expected);
-        }
-
-        public signatureHelpArgumentCountIs(expected: number) {
-            this.state.verifySignatureHelpArgumentCount(expected);
-        }
-
-        public currentSignatureParameterCountIs(expected: number) {
-            this.state.verifyCurrentSignatureHelpParameterCount(expected);
         }
 
         public currentSignatureHelpIs(expected: string) {
@@ -4842,14 +4806,13 @@ namespace FourSlashInterface {
         readonly overloadsCount?: number; // defaults to 1. //verify.signatureHelpCount
         readonly docComment?: string; //verify.currentSignatureHelpDocComment
         readonly text?: string; //verify.currentSignatureHelpIs
-        readonly currentParameterIsVariable?: boolean; //verify.currentParameterIsVariable
         readonly parameterName?: string; //verify.currentParameterHelpArgumentNameIs
-        readonly parameterSpan?: string; //verify.currentParameterSpanIs
+        readonly parameterSpan?: string;
         readonly parameterDocComment?: string; //verify.currentParameterHelpDocComment
         readonly parameterCount?: number; //verify.currentSignatureHelpParameterCount
+        readonly argumentCount?: number;
         readonly isVariadic?: boolean; //verify.currentSignatureHelpIsVariadic
         readonly tags?: ReadonlyArray<ts.JSDocTagInfo>; //verify.currentSignatureHelpTags
-        readonly argumentCount?: number;
     }
 
     export type ArrayOrSingle<T> = T | ReadonlyArray<T>;

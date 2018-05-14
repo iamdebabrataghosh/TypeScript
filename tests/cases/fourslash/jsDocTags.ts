@@ -61,15 +61,12 @@
 
 verify.baselineQuickInfo();
 
-
-goTo.marker("10");
-verify.currentSignatureHelpTagsAre([{name: "myjsdoctag", text:"this is a comment"}])
-goTo.marker("11");
-verify.currentSignatureHelpTagsAre([{name: "mytag", text:"comment1 comment2"}])
-goTo.marker("12");
-verify.currentSignatureHelpTagsAre([{name: "mytag"}])
-goTo.marker("13");
-verify.currentSignatureHelpTagsAre([{ name: "returns", text: "a value" }])
+verify.signatureHelp(
+    { marker: "10", tags: [{ name: "myjsdoctag", text:"this is a comment" }] },
+    { marker: "11", tags: [{ name: "mytag", text:"comment1 comment2" }] },
+    { marker: "12", tags: [{ name: "mytag "}] },
+    { marker: "13", tags: [{ name: "returns", text: "a value" }] },
+);
 
 goTo.marker('14');
 verify.completionEntryDetailIs(

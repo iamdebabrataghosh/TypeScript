@@ -9,7 +9,9 @@
 ////function str(n: number, radix?: number): string { return ""; }
 
 edit.insert("str(1,");
-verify.currentParameterHelpArgumentNameIs("radix");
-verify.currentParameterHelpArgumentDocCommentIs("The radix");
-verify.currentSignatureHelpIs("str(n: number, radix: number): string");
-verify.currentSignatureHelpDocCommentIs("Stringifies a number with radix");
+verify.signatureHelp({
+    text: "str(n: number, radix: number): string",
+    parameterName: "radix",
+    parameterDocComment: "The radix",
+    docComment: "Stringifies a number with radix",
+});

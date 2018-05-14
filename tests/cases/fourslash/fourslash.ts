@@ -262,16 +262,8 @@ declare namespace FourSlashInterface {
         rangesWithSameTextAreRenameLocations(): void;
         rangesAreRenameLocations(options?: Range[] | { findInStrings?: boolean, findInComments?: boolean, ranges?: Range[] });
         findReferencesDefinitionDisplayPartsAtCaretAre(expected: ts.SymbolDisplayPart[]): void;
-        /** @deprecated */ currentParameterHelpArgumentNameIs(name: string): void;
-        /** @deprecated */ currentParameterSpanIs(parameter: string): void;
         /** @deprecated */ currentParameterHelpArgumentDocCommentIs(docComment: string): void;
         /** @deprecated */ currentSignatureHelpDocCommentIs(docComment: string): void;
-        /** @deprecated */ currentSignatureHelpTagsAre(tags: ts.JSDocTagInfo[]): void;
-        /** @deprecated */ signatureHelpCountIs(expected: number): void;
-        /** @deprecated */ signatureHelpArgumentCountIs(expected: number): void;
-        /** @deprecated */ signatureHelpCurrentArgumentListIsVariadic(expected: boolean);
-        /** @deprecated */ currentSignatureParameterCountIs(expected: number): void;
-        /** @deprecated */ currentSignatureTypeParameterCountIs(expected: number): void;
         /** @deprecated */ currentSignatureHelpIs(expected: string): void;
         noSignatureHelp(...markers: string[]): void;
         signatureHelp(...options: VerifySignatureHelpOptions[]): void;
@@ -558,18 +550,18 @@ declare namespace FourSlashInterface {
 
     interface VerifySignatureHelpOptions {
         marker?: ArrayOrSingle<string>;
-        overloadsCount?: number; //Defaults to 1. //verify.signatureHelpCount
-        docComment?: string; //verify.currentSignatureHelpDocComment
-        text?: string; //verify.currentSignatureHelpIs
-        currentParameterIsVariable?: boolean; //verify.currentParameterIsVariable
-        name?: string; //verify.currentParameterHelpName
-        parameterName?: string; //verify.currentParameterHelpArgumentNameIs
-        parameterSpan?: string; //verify.currentParameterSpanIs
-        parameterDocComment?: string; //verify.currentParameterHelpDocComment
-        parameterCount?: number; //verify.currentSignatureHelpParameterCount
-        isVariadic?: boolean; //verify.currentSignatureHelpIsVariadic
-        tags?: ReadonlyArray<ts.JSDocTagInfo>; //verify.currentSignatureHelpTags
+        /** @default 1 */
+        overloadsCount?: number;
+        docComment?: string;
+        text?: string;
+        name?: string;
+        parameterName?: string;
+        parameterSpan?: string;
+        parameterDocComment?: string;
+        parameterCount?: number;
         argumentCount?: number;
+        isVariadic?: boolean;
+        tags?: ReadonlyArray<ts.JSDocTagInfo>;
     }
 
     type ArrayOrSingle<T> = T | ReadonlyArray<T>;

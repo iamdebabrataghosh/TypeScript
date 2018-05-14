@@ -13,6 +13,7 @@ verify.signatureHelp(
     },
     {
         marker: "2",
+        overloadsCount: 2,
         text: "clsOverload(test: string): clsOverload",
         parameterCount: 1,
         parameterName: "test",

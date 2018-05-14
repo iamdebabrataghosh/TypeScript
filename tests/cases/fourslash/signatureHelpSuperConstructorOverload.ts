@@ -26,6 +26,7 @@ verify.signatureHelp(
     },
     {
         marker: "superOverload2",
+        overloadsCount: 2,
         text: "SuperOverloadBase(test: string): SuperOverloadBase",
         parameterCount: 1,
         parameterName: "test",
