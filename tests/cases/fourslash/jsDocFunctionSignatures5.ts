@@ -14,5 +14,5 @@
 //////...
 ////}
 ////pathFilter(/**/'foo', 'bar', 'baz', {});
-goTo.marker();
-verify.currentSignatureHelpDocCommentIs("Filters a path based on a regexp or glob pattern.");
+
+verify.signatureHelp({ marker: "", docComment: "Filters a path based on a regexp or glob pattern." });

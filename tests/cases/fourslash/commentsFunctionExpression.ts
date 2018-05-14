@@ -76,7 +76,8 @@ verify.completionListContains('s', '(parameter) s: string', "the first parameter
 verify.quickInfoAt("16", "var assigned: (s: string) => number", "On variable\nSummary on expression");
 goTo.marker('17');
 verify.completionListContains("assigned", "var assigned: (s: string) => number", "On variable\nSummary on expression");
-goTo.marker('18');
-verify.currentSignatureHelpDocCommentIs("On variable\nSummary on expression");
-verify.currentParameterHelpArgumentDocCommentIs("the first parameter!\nparam on expression\nOn parameter ");
-
+verify.signatureHelp({
+    marker: "18",
+    docComment: "On variable\nSummary on expression",
+    parameterDocComment: "the first parameter!\nparam on expression\nOn parameter ",
+});
