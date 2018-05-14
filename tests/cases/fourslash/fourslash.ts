@@ -262,9 +262,6 @@ declare namespace FourSlashInterface {
         rangesWithSameTextAreRenameLocations(): void;
         rangesAreRenameLocations(options?: Range[] | { findInStrings?: boolean, findInComments?: boolean, ranges?: Range[] });
         findReferencesDefinitionDisplayPartsAtCaretAre(expected: ts.SymbolDisplayPart[]): void;
-        /** @deprecated */ currentParameterHelpArgumentDocCommentIs(docComment: string): void;
-        /** @deprecated */ currentSignatureHelpDocCommentIs(docComment: string): void;
-        /** @deprecated */ currentSignatureHelpIs(expected: string): void;
         noSignatureHelp(...markers: string[]): void;
         signatureHelp(...options: VerifySignatureHelpOptions[]): void;
         // Checks that there are no compile errors.

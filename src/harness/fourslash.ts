@@ -1446,7 +1446,7 @@ Actual: ${stringify(fullActual)}`);
             }
         }
 
-        public verifyCurrentSignatureHelpIs(expected: string) {
+        private verifyCurrentSignatureHelpIs(expected: string) {//!
             const help = this.getActiveSignatureHelpItem();
             assert.equal(
                 ts.displayPartsToString(help.prefixDisplayParts) +
@@ -1465,7 +1465,7 @@ Actual: ${stringify(fullActual)}`);
             assert.equal(ts.displayPartsToString(activeParameter.displayParts), parameter);
         }
 
-        public verifyCurrentParameterHelpDocComment(docComment: string) {
+        private verifyCurrentParameterHelpDocComment(docComment: string) {//!
             const activeParameter = this.getActiveParameter();
             const activeParameterDocComment = activeParameter.documentation;
             assert.equal(ts.displayPartsToString(activeParameterDocComment), docComment, this.assertionMessageAtLastKnownMarker("current parameter Help DocComment"));
@@ -1479,7 +1479,7 @@ Actual: ${stringify(fullActual)}`);
             assert.equal(this.getActiveSignatureHelpItem().isVariadic, expected);
         }
 
-        public verifyCurrentSignatureHelpDocComment(docComment: string) {
+        private verifyCurrentSignatureHelpDocComment(docComment: string) {//!
             const actualDocComment = this.getActiveSignatureHelpItem().documentation;
             assert.equal(ts.displayPartsToString(actualDocComment), docComment, this.assertionMessageAtLastKnownMarker("current signature help doc comment"));
         }
@@ -4266,18 +4266,6 @@ namespace FourSlashInterface {
 
         public findReferencesDefinitionDisplayPartsAtCaretAre(expected: ts.SymbolDisplayPart[]) {
             this.state.verifyDisplayPartsOfReferencedSymbol(expected);
-        }
-
-        public currentParameterHelpArgumentDocCommentIs(docComment: string) {
-            this.state.verifyCurrentParameterHelpDocComment(docComment);
-        }
-
-        public currentSignatureHelpDocCommentIs(docComment: string) {
-            this.state.verifyCurrentSignatureHelpDocComment(docComment);
-        }
-
-        public currentSignatureHelpIs(expected: string) {
-            this.state.verifyCurrentSignatureHelpIs(expected);
         }
 
         public noErrors() {
